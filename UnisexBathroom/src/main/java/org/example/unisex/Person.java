@@ -50,4 +50,7 @@ public class Person implements Runnable {
 		latch.countDown();
 	}
 
+	public String getId() {
+		return id;
+	}
 }

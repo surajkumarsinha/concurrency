@@ -3,11 +3,14 @@ package org.example.unisex;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.function.Supplier;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class GenderedBathRoom implements Bathroom {
 	private final Gender gender;
 	private final Lock lock;
 	private final Bathroom defaultBathroom;
+	private static final Logger logger = Logger.getLogger(GenderedBathRoom.class.getName());
 
 	public GenderedBathRoom(String id, Gender gender, int capacity) {
 		this.gender = gender;
@@ -22,11 +25,13 @@ public class GenderedBathRoom implements Bathroom {
 
 	@Override
 	public void add(Person person) {
+		logger.log(Level.INFO, String.format("Person %s is using gender bathroom %s", person.getId(), defaultBathroom.getId()));
 		lockedOperations(() -> defaultBathroom.add(person));
 	}
 
 	@Override
 	public boolean remove(Person person) {
+		logger.log(Level.INFO, String.format("Person %s is removed from gender bathroom %s", person.getId(), defaultBathroom.getId()));
 		return lockedOperations(() -> defaultBathroom.remove(person));
 	}
 

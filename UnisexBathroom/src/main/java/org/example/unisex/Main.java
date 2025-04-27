@@ -10,20 +10,18 @@ public class Main {
 
 		try(ExecutorService executorService = Executors.newVirtualThreadPerTaskExecutor()) {
 			List<Bathroom> bathRooms = List.of(
-				Bathroom.create("1", 5),
-				Bathroom.create("2", Gender.MALE, 3),
-				Bathroom.create("3", Gender.NONE, 3),
-				Bathroom.create("4", Gender.FEMALE, 5),
-				Bathroom.create("5", Gender.MALE, 2)
+				Bathroom.create("1", 3),
+				Bathroom.create("2", Gender.MALE, 2),
+				Bathroom.create("3", Gender.NONE, 1)
 			);
 
 			Manager bathroomManager = new DefaultManager();
 			bathroomManager.addBathrooms(bathRooms);
 
-			for (int i = 1; i <= 50; i++) {
+			for (int i = 1; i <= 2; i++) {
 				Random rand = new Random();
 				Gender gender = rand.nextBoolean() ? Gender.MALE : Gender.FEMALE;
-				Thread.sleep(rand.nextLong(500, 5000));
+				Thread.sleep(rand.nextLong(500, 1000));
 				Person person = new Person("person" + i, gender);
 				executorService.submit(person);
 				bathroomManager.accept(person);
