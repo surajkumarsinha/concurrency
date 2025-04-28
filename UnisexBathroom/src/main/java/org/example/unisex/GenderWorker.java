@@ -44,6 +44,7 @@ public class GenderWorker implements BathroomHandler, Runnable {
 				if(bathRoom != null) {
 					logger.log(Level.INFO, String.format("%s is assigned bathroom %s", person.getId(), bathRoom.getId()));
 					bathRoom.add(person);
+					scheduledPerson = null;
 				}
 				else scheduledPerson = person;
 				lock.unlock();
