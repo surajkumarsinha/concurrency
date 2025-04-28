@@ -28,16 +28,18 @@ public class Person implements Runnable {
 	}
 
 	private void useBathroom() {
-		logger.log(Level.INFO, String.format("Person with id: %s and gender %s needs bathroom", this.id, this.gender.name()));
 		try {
+			int tm = RANDOM.nextInt(1,4);
+			logger.log(Level.INFO, String.format("Person with id: %s and gender %s needs bathroom for %s seconds", this.id, this.gender.name(), tm));
 			latch.await();
-			TimeUnit.SECONDS.sleep(RANDOM.nextInt(1,4));
+			TimeUnit.SECONDS.sleep(tm);
 		} catch (InterruptedException e) {
 			logger.log(Level.SEVERE, e.getMessage());
 		}
 	}
 
 	private void leaveBathroom() {
+		logger.log(Level.INFO, String.format("Person with id: %s and gender %s leaves bathroom", this.id, this.gender.name()));
 		statusCallback.remove(this);
 	}
 

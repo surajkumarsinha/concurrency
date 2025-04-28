@@ -6,6 +6,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class GenderWorker implements BathroomHandler, Runnable {
@@ -16,6 +18,7 @@ public class GenderWorker implements BathroomHandler, Runnable {
 	private final Set<Bathroom> occupiedBathRooms;
 	private final BathroomHandler unisexHandler;
 	private final Lock lock = new ReentrantLock();
+	private static final Logger logger = Logger.getLogger(GenderWorker.class.getName());
 
 	public GenderWorker(
 		LinkedBlockingQueue<Person> incoming,
@@ -34,11 +37,14 @@ public class GenderWorker implements BathroomHandler, Runnable {
 	public void run() {
 		try {
 			Person scheduledPerson = null;
-			while (true) {
+			while (Thread.currentThread().isAlive()) {
 				Person person = scheduledPerson == null? incoming.take(): scheduledPerson;
 				lock.lock();
 				Bathroom bathRoom = parse(gender);
-				if(bathRoom != null) bathRoom.add(person);
+				if(bathRoom != null) {
+					logger.log(Level.INFO, String.format("%s is assigned bathroom %s", person.getId(), bathRoom.getId()));
+					bathRoom.add(person);
+				}
 				else scheduledPerson = person;
 				lock.unlock();
 				Thread.sleep(500);
@@ -56,6 +62,7 @@ public class GenderWorker implements BathroomHandler, Runnable {
 
 	@Override
 	public void occupied(String id, Bathroom bathRoom) {
+		logger.log(Level.INFO, String.format("Bathroom %s is full", id));
 		lock.lock();
 		bathRooms.remove(bathRoom);
 		occupiedBathRooms.add(bathRoom);
@@ -64,6 +71,7 @@ public class GenderWorker implements BathroomHandler, Runnable {
 
 	@Override
 	public void open(String id, Bathroom bathRoom) {
+		logger.log(Level.INFO, String.format("Bathroom %s is available now", id));
 		lock.lock();
 		occupiedBathRooms.remove(bathRoom);
 		bathRooms.add(bathRoom);

@@ -18,11 +18,6 @@ public class GenderedBathRoom implements Bathroom {
 		this.defaultBathroom = new DefaultBathroom(id, gender, capacity);
 	}
 
-	public GenderedBathRoom(String id, int capacity) {
-		this(id, Gender.NONE, capacity);
-	}
-
-
 	@Override
 	public void add(Person person) {
 		logger.log(Level.INFO, String.format("Person %s is using gender bathroom %s", person.getId(), defaultBathroom.getId()));
