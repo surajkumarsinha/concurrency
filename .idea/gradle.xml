@@ -10,6 +10,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/FaneuilHall" />
+            <option value="$PROJECT_DIR$/RoomParty" />
+            <option value="$PROJECT_DIR$/SenateBus" />
             <option value="$PROJECT_DIR$/UnisexBathroom" />
           </set>
         </option>
