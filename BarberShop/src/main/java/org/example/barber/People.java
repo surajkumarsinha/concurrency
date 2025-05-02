@@ -1,12 +1,16 @@
 package org.example.barber;
 
+import java.util.concurrent.Semaphore;
+
 public class People implements Runnable {
 	private final int id;
 	private final BarberShop barberShop;
+	private final Semaphore semaphore;
 
 	public People(int id, BarberShop barberShop) {
 		this.id = id;
 		this.barberShop = barberShop;
+		semaphore = new Semaphore(0);
 	}
 
 	@Override
@@ -18,10 +22,11 @@ public class People implements Runnable {
 				balk();
 			}
 			barberShop.incrementCustomer();
+			barberShop.getQueue().add(semaphore);
 			barberShop.getMutex().release();
 
 			barberShop.getCustomer().release(); // notify barber that it is seated
-			barberShop.getBarber().acquire(); // barber picks up this customer for hair cut
+			semaphore.acquire(); // barber picks up this customer for hair cut
 
 			getHaircut();
 
@@ -33,7 +38,7 @@ public class People implements Runnable {
 			barberShop.getMutex().release();
 
 		} catch (InterruptedException e) {
-			throw new RuntimeException(e);
+			e.printStackTrace();
 		}
 	}
 
