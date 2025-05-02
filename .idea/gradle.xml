@@ -9,6 +9,7 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/ClassicProblems" />
             <option value="$PROJECT_DIR$/FaneuilHall" />
             <option value="$PROJECT_DIR$/RoomParty" />
             <option value="$PROJECT_DIR$/SenateBus" />
