@@ -6,8 +6,6 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Main {
-	public static void main(String[] args) {
-	}
 
 	interface LogCallBack {
 		void ack();
@@ -84,7 +82,7 @@ public class Main {
 				moduleVsCallBack = new ConcurrentHashMap<>();
 				writeWorker = new Thread(() -> {
 					// keep thread alive
-					while(!Thread.currentThread().isAlive()) {
+					while(!Thread.currentThread().isInterrupted()) {
 						try {
 							LogTask task = taskQueue.take();
 							performLogging(task.action());
@@ -94,6 +92,7 @@ public class Main {
 						}
 					}
 				});
+				writeWorker.start();
 			}
 
 			@Override
