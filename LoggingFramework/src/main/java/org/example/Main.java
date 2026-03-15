@@ -1,9 +1,7 @@
 package org.example;
 
-import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class Main {
 
@@ -25,7 +23,7 @@ public class Main {
 
 			@Override
 			public void doSomeTask() {
-				logger.log(new Logger.LogTask(id, "some task"), this);
+				logger.log(new Logger.LogTask(id, "some task", this));
 			}
 
 			@Override
@@ -66,27 +64,25 @@ public class Main {
 	}
 
 	interface Logger {
-		void log(LogTask logTask, LogCallBack cb);
+		void log(LogTask logTask);
 
-		record LogTask(String moduleId, String action){}
+		record LogTask(String moduleId, String action, LogCallBack logCallBack){}
 
 		final class OneThreadLogger implements Logger {
 
 			private final Thread writeWorker;
 			private final BlockingQueue<LogTask> taskQueue;
-			private final Map<String, LogCallBack> moduleVsCallBack;
 			private LoggingStrategy loggingStrategy;
 
 			public OneThreadLogger() {
 				taskQueue = new ArrayBlockingQueue<>(10);
-				moduleVsCallBack = new ConcurrentHashMap<>();
 				writeWorker = new Thread(() -> {
 					// keep thread alive
 					while(!Thread.currentThread().isInterrupted()) {
 						try {
 							LogTask task = taskQueue.take();
 							performLogging(task.action());
-							moduleVsCallBack.get(task.moduleId()).ack();
+							task.logCallBack().ack();
 						} catch (InterruptedException e) {
 							throw new RuntimeException(e);
 						}
@@ -96,9 +92,8 @@ public class Main {
 			}
 
 			@Override
-			public void log(LogTask logTask, LogCallBack cb) {
-				taskQueue.add(logTask);
-				moduleVsCallBack.putIfAbsent(logTask.moduleId(), cb);
+			public void log(LogTask logTask) {
+				taskQueue.offer(logTask);
 			}
 
 			private void performLogging(String message) {
