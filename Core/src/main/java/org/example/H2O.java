@@ -1,5 +1,6 @@
 package org.example;
 
+import java.util.Random;
 import java.util.concurrent.*;
 
 public class H2O {
@@ -12,11 +13,12 @@ public class H2O {
 	private static int hydCount = 0;
 
 	public static void main(String[] args) throws InterruptedException {
+		Random random = new Random();
 		Thread.ofVirtual().start(() -> {
 			while(!Thread.currentThread().isInterrupted()) {
 				try {
 					Thread.ofVirtual().start(new Hydrogen());
-					Thread.sleep(500);
+					Thread.sleep(random.nextLong(500, 3000));
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);
 				}
@@ -27,7 +29,7 @@ public class H2O {
 			while(!Thread.currentThread().isInterrupted()) {
 				try {
 					Thread.ofVirtual().start(new Oxygen());
-					Thread.sleep(800);
+					Thread.sleep(random.nextLong(500, 3000));
 				} catch (InterruptedException e) {
 					throw new RuntimeException(e);
 				}
